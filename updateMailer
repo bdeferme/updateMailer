@@ -1,0 +1,46 @@
+!/bin/bash
+
+OS=$(uname -s)
+if [ $OS = "SunOS" ];
+  then 
+  OS=Solaris
+elif [ $OS = "Linux" ];
+  then
+  if [ -f /etc/redhat-release ];
+    then
+    DIST="Redhat"
+    REV=$(cat /etc/redhat-release)
+  elif [ -f /etc/debian_version ];
+    then
+    DIST="Debian"
+    REV=$(cat /etc/debian_version)
+  fi
+fi
+
+echo "Gathering repository information"
+if [[ $DIST == "Redhat" ]];
+then
+  TOOLS="${TOOLS} chkconfig yum"
+elif [[ $DIST == "Debian" ]];
+then
+  TOOLS="${TOOLS} dpkg blkid"
+fi
+NOTOOLS=""
+for tool in $TOOLS; do
+  TOOLP=$(which $tool 2> /dev/null)
+  if [[ x$TOOLP = "x" ]]; then
+    NOTOOLS="${NOTOOLS}$tool "
+  fi
+done
+
+if [[ ! x$NOTOOLS = "x" ]]; then
+  echo "ERR: The following needed tools are not installed:"
+  echo $NOTOOLS
+  echo
+  while [[ ! ( $ANSB == "y" || $ANSB == "n" ) ]]; do
+  echo
+  echo "Continue anyway (y/n)? "
+  read -n 1 ANSB
+  done
+  [[ $ANSB == "n" ]] && echo "Exiting." && exit
+fi
