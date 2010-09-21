@@ -10,12 +10,36 @@
 #
 
 version="0.1aplha"
+OUT=/dev/null
+
+showUsage() {
+        echo "Usage: $0"
+        echo "  -h      : show this help"
+        echo "  -v      : be verbose"
+        exit 0
+}
+
+# Options
+
+while getopts "vh" Option
+do
+        case $Option in
+                v) OUT=/dev/stdout
+                ;;
+                h) showUsage
+                ;;
+                *) showUsage
+                ;;
+        esac
+done
 
 #
 # Configuration
 #
 
 sendTo="updates@open-future.be"
+hostname=$(hostname)
+subject="[updateMailer] updates for $hostname"
 
 #
 # Check for OS and store in $OS / $DIST
@@ -37,14 +61,14 @@ elif [ $OS = "Linux" ];
   fi
 fi
 
-echo "updateMailer $version running on $OS $DIST $REV"
+echo "updateMailer $version running on $OS $DIST $REV" >$OUT
 
 #
 # Check if tools exist
 #
 
-echo ""
-echo "... checking for needed tools"
+echo "">$OUT
+echo "... checking for needed tools">$OUT
 
 if [[ $DIST == "Redhat" ]];
 then
@@ -62,20 +86,44 @@ for tool in $TOOLS; do
 done
 
 if [[ ! x$NOTOOLS = "x" ]]; then
-  echo "ERR: The following needed tools are not installed:"
-  echo $NOTOOLS
+  echo "ERR: The following needed tools are not installed:">/dev/stderr
+  echo $NOTOOLS>/dev/stderr
   echo
   while [[ ! ( $ANSB == "y" || $ANSB == "n" ) ]]; do
   echo
-  echo "Continue anyway (y/n)? "
+  echo "Continue anyway (y/n)? ">/dev/stderr
   read -n 1 ANSB
   done
   [[ $ANSB == "n" ]] && echo "Exiting." && exit
 fi
 
 #
-# Gather system information
+# Get updates
 #
 
-# hostname
-hostname=$(hostname)
+echo "... checking for updates">$OUT
+
+if [[ $OS = "Solaris" ]];
+then
+  echo "ERR: Your Operating System ($OS) is currently unsupported.">/dev/stderr
+elif [[ $OS = "Linux" ]];
+then
+  if [[ $DIST = "Redhat" ]];
+  then
+    echo "... Using yum">$OUT
+    yum list-sec > /tmp/updates.tmp
+    if [[ $? = "0" ]];
+    then
+      echo "... Yum list-sec found">$OUT
+    else
+      echo "... Yum list-sec not found. Using check-updates">$OUT
+      yum check-updates > /tmp/updates.tmp
+    fi
+  fi
+  if [[ $DIST = "Debian" ]];
+  then
+    echo "... Using apt-get"
+    apt-get -st updates upgrade > /tmp/updates.tmp 
+  fi
+fi
+
