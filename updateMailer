@@ -1,5 +1,19 @@
-!/bin/bash
+#!/bin/bash
+#
+# updateMailer (gather update information + mail them)
+# is a script written by: Bert Deferme <bert@open-future.be>
+#
+# Description:
+# Gather information on updates, and mail them to a specified email address.
+#
+# Released as GPLv3
+#
 
+version="0.1aplha"
+
+#
+# Check for OS and store in $OS / $DIST
+#
 OS=$(uname -s)
 if [ $OS = "SunOS" ];
   then 
@@ -17,13 +31,21 @@ elif [ $OS = "Linux" ];
   fi
 fi
 
-echo "Gathering repository information"
+echo "updateMailer $version running on $OS $DIST $REV"
+
+#
+# Check if tools exist
+#
+
+echo ""
+echo "... checking for needed tools"
+
 if [[ $DIST == "Redhat" ]];
 then
-  TOOLS="${TOOLS} chkconfig yum"
+  TOOLS="${TOOLS} yum"
 elif [[ $DIST == "Debian" ]];
 then
-  TOOLS="${TOOLS} dpkg blkid"
+  TOOLS="${TOOLS} apt-get"
 fi
 NOTOOLS=""
 for tool in $TOOLS; do
