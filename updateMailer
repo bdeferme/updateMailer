@@ -12,6 +12,12 @@
 version="0.1aplha"
 
 #
+# Configuration
+#
+
+sendTo="updates@open-future.be"
+
+#
 # Check for OS and store in $OS / $DIST
 #
 OS=$(uname -s)
@@ -66,3 +72,10 @@ if [[ ! x$NOTOOLS = "x" ]]; then
   done
   [[ $ANSB == "n" ]] && echo "Exiting." && exit
 fi
+
+#
+# Gather system information
+#
+
+# hostname
+hostname=$(hostname)
