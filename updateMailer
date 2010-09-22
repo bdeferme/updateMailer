@@ -15,7 +15,7 @@
 
 sendTo="updates@open-future.be"				# The address to send updates to
 hostname=$(hostname)					# Get the hostname - used in subject
-subject="[updateMailer] updates for $hostname"		# The subject line
+subject="[updateMailer] updates for ${hostname}"		# The subject line
 from="root@sight.local" 				# The address to send FROM
 
 #
@@ -149,7 +149,7 @@ fi
 if [[ $updates > 0 ]];
 then
   echo "... Updates found, sending email">$OUT
-  mail -s $subject $sendTo -- -f "$from" </tmp/updates.tmp
+  mail -s $subject $sendTo -- -f "${from}" </tmp/updates.tmp
 else
   echo "... No updates">$OUT
 fi
