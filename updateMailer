@@ -149,7 +149,7 @@ fi
 if [[ $updates > 0 ]];
 then
   echo "... Updates found, sending email">$OUT
-  mail -s $subject $sendTo -- -f "${from}" </tmp/updates.tmp
+  mail -s "${subject}" $sendTo -- -f "${from}" </tmp/updates.tmp
 else
   echo "... No updates">$OUT
 fi
