@@ -13,10 +13,10 @@
 # Configuration
 #
 
-sendTo="updates@open-future.be"				# The address to send updates to
+sendTo="updates@yourcompany.be"				# The address to send updates to
 hostname=$(hostname)					# Get the hostname - used in subject
 subject="[updateMailer] updates for ${hostname}"		# The subject line
-from="root@sight.local" 				# The address to send FROM
+from="root@pc.local" 				# The address to send FROM
 
 #
 # Do not edit anything below, unless you understand BASH ;-)
